@@ -86,20 +86,32 @@ function AnalysisContent() {
               <CheckCircle className="w-5 h-5 text-green-400" /> Matched Skills
             </h2>
             <div className="flex flex-wrap gap-2">
-              {data.matched_skills.map((s) => (
+              {data.matched_skills.length > 0 ? data.matched_skills.map((s) => (
                 <span key={s} className="px-3 py-1 bg-green-900/20 border border-green-800 text-green-300 text-sm rounded-full">{s}</span>
-              ))}
+              )) : (
+                <span className="text-sm text-gray-500">No matched skills found</span>
+              )}
             </div>
           </div>
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
             <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <XCircle className="w-5 h-5 text-red-400" /> Missing Skills
+              {data.missing_skills.length === 0
+                ? <CheckCircle className="w-5 h-5 text-green-400" />
+                : <XCircle className="w-5 h-5 text-red-400" />
+              } Missing Skills
             </h2>
-            <div className="flex flex-wrap gap-2">
-              {data.missing_skills.map((s) => (
-                <span key={s} className="px-3 py-1 bg-red-900/20 border border-red-800 text-red-300 text-sm rounded-full">{s}</span>
-              ))}
-            </div>
+            {data.missing_skills.length === 0 ? (
+              <div className="flex items-center gap-2 text-green-400">
+                <CheckCircle className="w-4 h-4" />
+                <span className="text-sm font-medium">You have all the required skills — great job!</span>
+              </div>
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {data.missing_skills.map((s) => (
+                  <span key={s} className="px-3 py-1 bg-red-900/20 border border-red-800 text-red-300 text-sm rounded-full">{s}</span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -142,23 +154,33 @@ function AnalysisContent() {
         {/* Skill Gaps */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
           <h2 className="text-lg font-semibold mb-4">Skill Gap Details</h2>
-          <div className="space-y-3">
-            {data.skill_gaps.map((gap: SkillGap, i) => (
-              <div key={i} className={`border rounded-xl p-4 ${importanceColor(gap.importance)}`}>
-                <div className="flex items-center justify-between mb-1">
-                  <span className="font-medium">{gap.skill}</span>
-                  <span className={`text-xs px-2 py-0.5 rounded-full border ${importanceColor(gap.importance)}`}>
-                    {gap.importance}
-                  </span>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {gap.resources.map((r, j) => (
-                    <span key={j} className="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">{r}</span>
-                  ))}
-                </div>
+          {data.missing_skills.length === 0 || data.skill_gaps.length === 0 ? (
+            <div className="flex items-center gap-3 bg-green-900/20 border border-green-800 rounded-xl p-4">
+              <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />
+              <div>
+                <p className="text-green-300 font-medium">No skill gaps detected!</p>
+                <p className="text-green-400/70 text-sm mt-0.5">Your resume already covers the key requirements for this role.</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {data.skill_gaps.map((gap: SkillGap, i) => (
+                <div key={i} className={`border rounded-xl p-4 ${importanceColor(gap.importance)}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="font-medium">{gap.skill}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full border ${importanceColor(gap.importance)}`}>
+                      {gap.importance}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {gap.resources.map((r, j) => (
+                      <span key={j} className="text-xs bg-gray-800 px-2 py-1 rounded text-gray-300">{r}</span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Roadmap */}
