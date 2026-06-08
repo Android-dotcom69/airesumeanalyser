@@ -163,15 +163,34 @@ export default function DashboardPage() {
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-5">
             <div>
               <h2 className="text-lg font-semibold mb-1">What role are you targeting?</h2>
-              <p className="text-sm text-gray-500">Type any job title — e.g. "Machine Learning Engineer", "Frontend Developer", "DevOps Engineer"</p>
+              <p className="text-sm text-gray-500">Pick a role below or type your own</p>
             </div>
+
+            {/* Quick-select role chips */}
+            <div className="flex flex-wrap gap-2">
+              {["Software Engineer", "AI Engineer", "Data Analyst", "Web Developer", "Cybersecurity Analyst"].map((role) => (
+                <button
+                  key={role}
+                  type="button"
+                  onClick={() => setTargetRole(role)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium border transition
+                    ${targetRole === role
+                      ? "bg-indigo-600 border-indigo-500 text-white"
+                      : "bg-gray-800 border-gray-700 text-gray-300 hover:border-indigo-500 hover:text-white"}`}
+                >
+                  {role}
+                </button>
+              ))}
+            </div>
+
             <input
               type="text"
               value={targetRole}
               onChange={(e) => setTargetRole(e.target.value)}
-              placeholder="e.g. Software Engineer, Data Scientist, Product Manager..."
+              placeholder="Or type a custom role — e.g. Machine Learning Engineer"
               className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition text-sm"
             />
+
             <button
               onClick={handleAnalyse}
               disabled={analysing || !targetRole.trim()}
@@ -184,7 +203,7 @@ export default function DashboardPage() {
               )}
             </button>
             {analysing && (
-              <p className="text-center text-sm text-gray-500">This takes 15-30 seconds — Groq AI is reading your resume carefully</p>
+              <p className="text-center text-sm text-gray-500">This takes 15–30 seconds — Groq AI is reading your resume carefully</p>
             )}
           </div>
         )}
