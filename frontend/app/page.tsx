@@ -11,7 +11,6 @@ const features = [
   { icon: Brain, title: "Powered by Groq AI", desc: "Built on Groq's Llama 3.3 for fast, accurate career feedback" },
 ];
 
-const roles = ["Software Engineer", "AI Engineer", "Data Analyst", "Web Developer", "Cybersecurity Analyst"];
 
 export default function HomePage() {
   return (
@@ -29,29 +28,24 @@ export default function HomePage() {
           Powered by Groq AI — Free & Fast
         </div>
         <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">
-          Your AI Career Co-Pilot
+          AI-Powered Career Intelligence
         </h1>
         <p className="text-xl text-gray-400 mb-10 max-w-2xl mx-auto">
           Upload your resume, pick a target role, and get instant ATS scores, skill gap analysis,
           a personalized learning roadmap, and interview questions — all in one place.
         </p>
         <div className="flex gap-4 justify-center flex-wrap">
-          <Link href="/register" className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-medium transition text-lg">
+          <Link href="/login" className="px-8 py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-medium transition text-lg">
             Analyse My Resume
-          </Link>
-          <Link href="/login" className="px-8 py-3 border border-gray-700 hover:border-gray-500 rounded-xl font-medium transition text-lg text-gray-300">
-            Sign In
           </Link>
         </div>
       </section>
 
-      <section className="max-w-4xl mx-auto px-6 pb-16">
-        <p className="text-center text-sm text-gray-500 mb-4">Optimised for roles including</p>
-        <div className="flex flex-wrap gap-2 justify-center">
-          {roles.map((r) => (
-            <span key={r} className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-full text-sm text-gray-300">{r}</span>
-          ))}
-        </div>
+      <section className="max-w-3xl mx-auto px-6 pb-16 text-center">
+        <p className="text-2xl font-semibold text-gray-200 leading-snug">
+          Stop guessing. Start growing.{" "}
+          <span className="text-indigo-400">Know exactly where you stand</span> — and the fastest path to where you want to be.
+        </p>
       </section>
 
       <section className="max-w-5xl mx-auto px-6 py-16">
@@ -67,13 +61,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="text-center py-20 px-6">
-        <h2 className="text-3xl font-bold mb-4">Ready to level up your career?</h2>
-        <p className="text-gray-400 mb-8">Free to try. No credit card required.</p>
-        <Link href="/register" className="px-10 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-xl font-semibold text-lg transition inline-block">
-          Start for Free
-        </Link>
-      </section>
     </main>
   );
 }

@@ -74,8 +74,8 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Sign In"}
           </button>
           <p className="text-center text-sm text-gray-400">
-            No account?{" "}
-            <Link href="/register" className="text-indigo-400 hover:text-indigo-300">Create one</Link>
+            Don&apos;t have an account?{" "}
+            <Link href="/register" className="text-indigo-400 hover:text-indigo-300 underline underline-offset-2">Sign up</Link>
           </p>
         </form>
       </div>
