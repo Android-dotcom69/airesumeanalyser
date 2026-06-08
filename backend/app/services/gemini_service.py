@@ -44,39 +44,49 @@ def _chat(prompt: str) -> str:
 async def analyze_resume(resume_text: str, target_role: str) -> dict:
     role_req = _role_context(target_role)
 
-    prompt = f"""Analyze this resume for the target role of "{target_role}".
+    prompt = f"""You are analyzing a resume for the role: "{target_role}".
 
-ROLE REQUIREMENTS:
+ROLE REQUIREMENTS (use ONLY these to judge skills):
 {role_req}
 
-RESUME TEXT:
+RESUME TEXT (read carefully — every skill mentioned counts):
 {resume_text}
 
-Return a JSON object with EXACTLY this structure:
+Follow these steps IN ORDER to build your JSON response:
+
+STEP 1 — Extract skills: Read the entire resume and list every technical skill, tool, language, framework, or technology mentioned. Be thorough — include everything explicitly stated.
+
+STEP 2 — Match skills: Compare your extracted skills against the role requirements above. A skill is "matched" if it appears (or a close synonym appears) in BOTH the resume AND the role requirements list.
+
+STEP 3 — Find missing skills: List only the required skills (core + important) that are genuinely absent from the resume.
+
+STEP 4 — Calculate scores using these EXACT formulas:
+- match_percentage = round((number of matched_skills / total core+important skills) * 100)
+- ats_score = start at 50, add 5 for each ATS keyword found in resume, cap at 95. If matched_skills has 5+ items, minimum ats_score is 65.
+- strength_score = based on impact statements, numbers/metrics in resume, and action verbs (0-100)
+
+STEP 5 — Build skill_gaps: ONLY include skills that are in missing_skills. If missing_skills is empty, skill_gaps MUST be [].
+
+Now return ONLY a valid JSON object with this exact structure (no markdown, no extra text):
 {{
-  "ats_score": <integer 0-100>,
-  "strength_score": <integer 0-100>,
-  "match_percentage": <integer 0-100>,
-  "extracted_skills": [<list of skills found in resume>],
-  "matched_skills": [<skills from resume that match role requirements>],
-  "missing_skills": [<required skills not found in resume>],
+  "ats_score": <integer 0-100, derived from Step 4>,
+  "strength_score": <integer 0-100, derived from Step 4>,
+  "match_percentage": <integer 0-100, derived from Step 4 formula>,
+  "extracted_skills": [<all skills found in resume from Step 1>],
+  "matched_skills": [<skills present in BOTH resume and role requirements from Step 2>],
+  "missing_skills": [<required skills NOT found in resume from Step 3>],
   "skill_gaps": [
     {{
-      "skill": "<skill name>",
+      "skill": "<must be from missing_skills only>",
       "importance": "<critical|important|nice-to-have>",
-      "resources": ["<resource 1>", "<resource 2>"]
+      "resources": ["<specific course name + platform>", "<specific resource>"]
     }}
   ],
-  "ats_feedback": [<3-5 specific ATS improvement tips as strings>],
-  "strengths": [<3-5 specific strengths from this resume>],
-  "weaknesses": [<3-5 specific weaknesses or gaps>],
-  "summary": "<2-3 sentence overall assessment>"
-}}
-
-Scoring guidance:
-- ats_score: Based on keyword density, formatting clarity, section headers, no tables/graphics in text
-- strength_score: Based on impact statements, quantified achievements, relevance to role
-- match_percentage: Percentage of core+important skills present"""
+  "ats_feedback": [<3-5 specific, actionable ATS improvement tips>],
+  "strengths": [<3-5 specific strengths visible in this resume>],
+  "weaknesses": [<3-5 specific weaknesses or gaps in this resume>],
+  "summary": "<2-3 sentence honest overall assessment>"
+}}"""
 
     return json.loads(_clean_json(_chat(prompt)))
 
