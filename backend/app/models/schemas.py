@@ -62,6 +62,12 @@ class RoadmapPhase(BaseModel):
     courses: List[str]
 
 
+class WritingImprovement(BaseModel):
+    original: str        # exact sentence from resume
+    improved: str        # AI-rewritten version
+    reason: str          # short explanation of what was improved
+
+
 class AnalysisResult(BaseModel):
     resume_id: str
     target_role: str
@@ -75,6 +81,7 @@ class AnalysisResult(BaseModel):
     ats_feedback: List[str]
     strengths: List[str]
     weaknesses: List[str]
+    writing_improvements: List[WritingImprovement]
     roadmap: List[RoadmapPhase]
     interview_questions: List[str]
     summary: str

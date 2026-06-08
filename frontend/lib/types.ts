@@ -16,6 +16,12 @@ export interface RoadmapPhase {
   courses: string[];
 }
 
+export interface WritingImprovement {
+  original: string;
+  improved: string;
+  reason: string;
+}
+
 export interface AnalysisResult {
   resume_id: string;
   target_role: JobRole;
@@ -29,6 +35,7 @@ export interface AnalysisResult {
   ats_feedback: string[];
   strengths: string[];
   weaknesses: string[];
+  writing_improvements: WritingImprovement[];
   roadmap: RoadmapPhase[];
   interview_questions: string[];
   summary: string;

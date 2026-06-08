@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException
 from datetime import datetime
+import asyncio
 from bson import ObjectId
 from app.api.deps import get_current_user
 from app.database import get_db
 from app.models.schemas import AnalysisRequest, AnalysisResult, InterviewQuestionRequest
-from app.services.gemini_service import analyze_resume, generate_roadmap, generate_interview_questions
+from app.services.gemini_service import analyze_resume, generate_roadmap, generate_interview_questions, generate_writing_improvements
 
 router = APIRouter(prefix="/api/analysis", tags=["analysis"])
 
@@ -24,35 +25,12 @@ async def run_analysis(payload: AnalysisRequest, current_user: dict = Depends(ge
     role = payload.target_role
 
     analysis_data = await analyze_resume(raw_text, role)
-
-    # ── Server-side consistency correction ──────────────────────────────────
-    matched = analysis_data.get("matched_skills", [])
     missing = analysis_data.get("missing_skills", [])
-    total_required = len(matched) + len(missing)
-
-    # Recalculate match_percentage from actual skill lists
-    if total_required > 0:
-        analysis_data["match_percentage"] = round(len(matched) / total_required * 100)
-    else:
-        analysis_data["match_percentage"] = 0
-
-    # ATS score must be proportional: can't be high if no matched skills
-    if len(matched) == 0 and analysis_data.get("ats_score", 0) > 50:
-        analysis_data["ats_score"] = min(analysis_data["ats_score"], 45)
-
-    # skill_gaps must only contain skills from missing_skills
-    missing_set = set(s.lower() for s in missing)
-    analysis_data["skill_gaps"] = [
-        gap for gap in analysis_data.get("skill_gaps", [])
-        if gap.get("skill", "").lower() in missing_set
-    ]
-    # If no missing skills, clear skill_gaps entirely
-    if not missing:
-        analysis_data["skill_gaps"] = []
-    # ────────────────────────────────────────────────────────────────────────
-
-    roadmap = await generate_roadmap(raw_text, role, missing)
-    questions = await generate_interview_questions(raw_text, role)
+    roadmap, questions, writing_improvements = await asyncio.gather(
+        generate_roadmap(raw_text, role, missing),
+        generate_interview_questions(raw_text, role),
+        generate_writing_improvements(raw_text),
+    )
 
     result_doc = {
         "resume_id": payload.resume_id,
@@ -62,6 +40,7 @@ async def run_analysis(payload: AnalysisRequest, current_user: dict = Depends(ge
         **analysis_data,
         "roadmap": roadmap,
         "interview_questions": questions,
+        "writing_improvements": writing_improvements,
     }
 
     await db.analyses.insert_one(result_doc)
@@ -79,6 +58,7 @@ async def run_analysis(payload: AnalysisRequest, current_user: dict = Depends(ge
         ats_feedback=analysis_data["ats_feedback"],
         strengths=analysis_data["strengths"],
         weaknesses=analysis_data["weaknesses"],
+        writing_improvements=writing_improvements,
         roadmap=roadmap,
         interview_questions=questions,
         summary=analysis_data["summary"],

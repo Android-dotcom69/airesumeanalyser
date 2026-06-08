@@ -166,23 +166,6 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-500">Pick a role below or type your own</p>
             </div>
 
-            {/* Quick-select role chips */}
-            <div className="flex flex-wrap gap-2">
-              {["Software Engineer", "AI Engineer", "Data Analyst", "Web Developer", "Cybersecurity Analyst"].map((role) => (
-                <button
-                  key={role}
-                  type="button"
-                  onClick={() => setTargetRole(role)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium border transition
-                    ${targetRole === role
-                      ? "bg-indigo-600 border-indigo-500 text-white"
-                      : "bg-gray-800 border-gray-700 text-gray-300 hover:border-indigo-500 hover:text-white"}`}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
-
             <input
               type="text"
               value={targetRole}

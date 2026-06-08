@@ -269,6 +269,35 @@ Total 12-20 weeks. Use real course names (e.g. "CS50 on edX"). Prioritize high-i
     return json.loads(_clean_json(_chat(prompt)))
 
 
+async def generate_writing_improvements(resume_text: str) -> list[dict]:
+    prompt = f"""You are a professional resume writing coach. Read this resume and find 5-7 weak sentences that could be written better.
+
+RESUME TEXT:
+{resume_text[:4000]}
+
+For each weak sentence:
+- Copy the EXACT original sentence from the resume (word for word)
+- Rewrite it to be stronger: use powerful action verbs, add quantified impact, be specific
+- Give a short reason (max 10 words) explaining the improvement
+
+Rules:
+- Only pick sentences that actually exist in the resume — do NOT invent sentences
+- Improvements should add impact numbers/metrics where possible (e.g. "improved performance by 40%")
+- Focus on bullet points, job descriptions, and achievement statements
+- Skip header lines, contact info, and section titles
+
+Return ONLY a valid JSON array:
+[
+  {{
+    "original": "exact sentence copied from resume",
+    "improved": "rewritten stronger version with action verb and impact",
+    "reason": "short reason for improvement"
+  }}
+]"""
+
+    return json.loads(_clean_json(_chat(prompt)))
+
+
 async def generate_interview_questions(resume_text: str, target_role: str, difficulty: str = "mixed") -> list[str]:
     prompt = f"""Generate 10 interview questions for a "{target_role}" candidate based on their resume.
 

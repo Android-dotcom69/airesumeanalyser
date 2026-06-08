@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { AnalysisResult, RoadmapPhase, SkillGap } from "@/lib/types";
+import { AnalysisResult, RoadmapPhase, SkillGap, WritingImprovement } from "@/lib/types";
 import { CheckCircle, XCircle, AlertCircle, ChevronDown, ChevronUp, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -228,6 +228,38 @@ function AnalysisContent() {
             ))}
           </div>
         </div>
+
+        {/* Writing Improvements */}
+        {data.writing_improvements && data.writing_improvements.length > 0 && (
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+            <h2 className="text-lg font-semibold mb-1">Resume Writing Improvements</h2>
+            <p className="text-sm text-gray-500 mb-5">AI-suggested rewrites for weak sentences found in your resume</p>
+            <div className="space-y-5">
+              {data.writing_improvements.map((item: WritingImprovement, i: number) => (
+                <div key={i} className="rounded-xl border border-gray-700 overflow-hidden">
+                  {/* Original */}
+                  <div className="bg-red-950/30 border-b border-gray-700 px-4 py-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-semibold text-red-400 uppercase tracking-wide">Original</span>
+                    </div>
+                    <p className="text-sm text-red-200/80 italic">&ldquo;{item.original}&rdquo;</p>
+                  </div>
+                  {/* Improved */}
+                  <div className="bg-green-950/20 px-4 py-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-xs font-semibold text-green-400 uppercase tracking-wide">Suggested Rewrite</span>
+                    </div>
+                    <p className="text-sm text-green-200/90">&ldquo;{item.improved}&rdquo;</p>
+                  </div>
+                  {/* Reason */}
+                  <div className="bg-gray-800/40 px-4 py-2">
+                    <p className="text-xs text-gray-400"><span className="text-indigo-400 font-medium">Why: </span>{item.reason}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Interview Questions */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
